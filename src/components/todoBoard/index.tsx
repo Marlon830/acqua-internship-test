@@ -31,7 +31,7 @@ export default function TodoBoard() {
       setDoneItems(storedDone);
       setItemsLoaded(true);
     }
-  }, [loading]);
+  }, [loading, storedTodo, storedDone, setTodoItems, setDoneItems]);
 
   useEffect(() => {
     // At start, drag and drop values are changed for the default values before Zustand hydration
@@ -39,13 +39,13 @@ export default function TodoBoard() {
     if (itemsLoaded) {
       setStoredTodo(todoItems);
     }
-  }, [todoItems]);
+  }, [todoItems, itemsLoaded, setStoredTodo]);
 
   useEffect(() => {
     if (itemsLoaded) {
       setStoredDone(doneItems);
     }
-  }, [doneItems]);
+  }, [doneItems, itemsLoaded, setStoredDone]);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-acqua-soft-white">
