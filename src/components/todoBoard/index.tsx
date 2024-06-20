@@ -2,31 +2,50 @@
 
 import { useDragAndDrop } from '@formkit/drag-and-drop/react';
 import SmartBar from '@/components/smartBar';
-
-const TODO_ITEMS = [
-  'AI Fish or Phish',
-  'Compile Coral DB',
-  'AI Sub Navigation',
-  'Server Water Cooling',
-  'Whale Song AI',
-  'Marine Chatbot',
-];
-
-const DONE_ITEMS = ['Dolphin Comm Sim'];
+import { useTodoStore, useLoadingTodoItemsStore } from '@/store/useTodoStore';
+import { useEffect, useState } from 'react';
 
 export default function TodoBoard() {
+  const { storedTodo, storedDone, setStoredTodo, setStoredDone } =
+    useTodoStore();
+  const { loading } = useLoadingTodoItemsStore();
+  // This is used to know when the items are set in the drag and drop hook
+  const [itemsLoaded, setItemsLoaded] = useState(false);
+
   const [todoList, todoItems, setTodoItems] = useDragAndDrop<
     HTMLUListElement,
     string
-  >(TODO_ITEMS, {
+  >(storedTodo, {
     group: 'todoList',
   });
   const [doneList, doneItems, setDoneItems] = useDragAndDrop<
     HTMLUListElement,
     string
-  >(DONE_ITEMS, {
+  >(storedDone, {
     group: 'todoList',
   });
+
+  useEffect(() => {
+    if (!loading) {
+      setTodoItems(storedTodo);
+      setDoneItems(storedDone);
+      setItemsLoaded(true);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    // At start, drag and drop values are changed for the default values before Zustand hydration
+    // Without this condition, the stored values will be reset to the original values
+    if (itemsLoaded) {
+      setStoredTodo(todoItems);
+    }
+  }, [todoItems]);
+
+  useEffect(() => {
+    if (itemsLoaded) {
+      setStoredDone(doneItems);
+    }
+  }, [doneItems]);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-acqua-soft-white">
