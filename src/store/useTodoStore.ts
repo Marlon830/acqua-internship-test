@@ -48,7 +48,7 @@ export const useTodoStore = create<StoreState>()(
 
         return (state, error) => {
           if (error) {
-            console.log('an error ocurred during hydration', error);
+            console.error('an error ocurred during hydration', error);
           }
         };
       },
