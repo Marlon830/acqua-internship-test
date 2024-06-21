@@ -1,5 +1,10 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MdOutlineWaterDrop } from 'react-icons/md';
+import {
+  getUpdatedTodosAiCompletion,
+  extractTodosFromMessage,
+  TodosToUpdate,
+} from '@/services/aiSmartBarService';
 
 interface SmartBarProps {
   setTodoItems: Dispatch<SetStateAction<string[]>>;
@@ -17,7 +22,7 @@ export default function SmartBar({
   const [error, setError] = useState(false);
   const [value, setValue] = useState('');
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (value === '') return;
 
     const wantedItemInTodo = todoItems.find((item) => item === value);
@@ -30,7 +35,38 @@ export default function SmartBar({
       setTodoItems((prev) => [...prev, wantedItemInDone]);
       setDoneItems((prev) => prev.filter((item) => item !== wantedItemInDone));
     } else {
-      setError(true);
+      const out = await getUpdatedTodosAiCompletion(
+        { todo: todoItems, done: doneItems },
+        value,
+      );
+
+      try {
+        const content = out?.choices?.[0]?.message?.content;
+        const updatedTodosLists: TodosToUpdate =
+          extractTodosFromMessage(content);
+
+        if (
+          !updatedTodosLists.todo ||
+          !updatedTodosLists.done ||
+          (updatedTodosLists.todo.length === 0 &&
+            updatedTodosLists.done.length === 0)
+        ) {
+          setError(true);
+          setValue('');
+          return;
+        }
+
+        setTodoItems(updatedTodosLists.todo);
+        setDoneItems(updatedTodosLists.done);
+      } catch (error) {
+        console.error(
+          'An error ocurred while parsing the ai api output',
+          error,
+        );
+        setError(true);
+        setValue('');
+        return;
+      }
     }
 
     setValue('');
