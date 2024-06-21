@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.0.38",
+    "@huggingface/inference": "^2.7.0",
     "geist": "^1.0.0",
     "next": "latest",
     "react": "latest",
