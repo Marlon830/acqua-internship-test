@@ -23,3 +23,8 @@ To start this task, I looked up the documentation of the OpenAI api. After found
 I then refined the prompt system so that the results were more consistent by looking at some prompt engineering principles on the internet.
 
 At first, I could just move one todo to another list at a time. Then I wanted that it could be possible to add a todo from the smart bar. So I added instructions in the system prompt.
+
+**🗒️ Note**: Don't forget to add your HuggingFace api key in the `.env` file at the root of the repository like this:
+```shell
+NEXT_PUBLIC_HF_TOKEN={your_huggingface_api_key}
+```
