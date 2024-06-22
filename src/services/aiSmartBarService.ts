@@ -27,19 +27,13 @@ export async function getUpdatedTodosAiCompletion(
       {
         role: 'user',
         content:
-          '[System] You will be provided a list of string in JSON format. They are Todo list and done Todo list. Your only task is move ONE AND ONLY ONE item of a list to the other list according to the user input. YOU CAN MOVE ONE AND ONLY ONE thing from a list to another. DO NOT FORGET SOMETHING FROM A LIST IF YOU DON\'T NEED TO UPDATE IT. Output it in JSON format by following this template: "{"todo": [{updatedTodoList}],"done": [{updatedDoneList}]}". You can not generate text that isn\'t asked for. DO NOT FORGET ANYTHING IN THE TEMPLATE. REMEMBER THAT YOU CAN ONLY MOVE ONE AND ONLY ONE ITEM AT THE TIME FOR A JSON OUTPUT. Let\'s try it to see if you understood.\n\n{"todo": ["AI Fish or Phish","Compile Coral DB","AI Sub Navigation","Server Water Cooling","Whale Song AI","Marine Chatbot"],"done": ["Dolphin Comm Sim"]}\n "i just finished ai fish"',
-      },
-      {
-        role: 'assistant',
-        content:
-          '{"todo": ["Compile Coral DB","AI Sub Navigation","Server Water Cooling","Whale Song AI","Marine Chatbot"],"done": ["Dolphin Comm Sim","AI Fish or Phish"]}',
-      },
-      {
-        role: 'user',
-        content: JSON.stringify(todosLists) + ' ' + value,
+          '[System] You will be provided a list of string in JSON format. They are Todo list and done Todo list. These lists are complete and you can not assume that something is missing. The user wants you to move tasks from a list to the other. Your task is to update the two lists. The user is always talking about existing tasks. The user wants either to move a task from todo to done, or to move it from done to todo. You must detect which tasks to moves because the user won\'t say it to you. You must detect where they go between todo and done based on what the user said to you. Think step by step, stay simple. Output in JSON format by following this template: "{"todo": [{updatedTodoList}],"done": [{updatedDoneList}]}". You must not output something that is not the requested JSON. You are not able to talk, you are only able to provide the requested JSON. Do not explain what you did. You can only provide one updated JSON.\n\n' +
+          JSON.stringify(todosLists) +
+          ' ' +
+          value,
       },
     ],
-    max_tokens: 100,
+    max_tokens: 1000,
   });
 
   return response;
